@@ -1,3 +1,18 @@
+!! Introduction
+
+Commands are reification of actions and used in many places such as UI frameworks or applications such 
+as texteditors and tools such debuggers.
+Since recent Pharo versions, Pharo did not have a common way of expressing commands and this led to multiple ways of doing the same.
+Each project was reimplementing commands.
+To solve this problem we started to analysis the space and existing solutions. We designed 
+the Commander20 framework that Pharo will use and that all the clients will be migrated too with time.
+While the command design pattern is simple, designing a simple yet versatile framework is worth a documentation.
+This booklet describes how commands are expressed in Pharo.
+
+To set some stage we start by defining a simple domain and applications in Spec20. 
+Then we show how commands can be defined. 
+In the final chapter we discuss the design of the framework with more details.
+The code used in the examples is available at https://github.com/Ducasse/EgContactBook
 
 
 ${inputFile:path=Chapters/ContactBook/ContactBook.pillar}$
