@@ -285,41 +285,42 @@ EgContactBookPresenter >> initializePresenters
 Building menu is nice, but sometimes we need to add a menu into an existing one. 
 Commander supports this as we show it now. 
 
-Imagine that we have a new functionality that we want to add to the contact book and that this behavior is packaged in another package. 
+Imagine that we have a new functionality that we want to add to the contact book and that this behavior is packaged in another package, here, ==EgContactBook-Extensions==.
 First we will define a new command and second we will show how we can extend the existing menu to add a new menu item. 
 
 [[[
 EgContactBookCommand subclass: #EgChangePhoneCommand
 	instanceVariableNames: 'newPhone'
 	classVariableNames: ''
-	package: 'Commander2-ContactBook-Extensions'
+	package: 'EgContactBook-Extensions'
 ]]]
 
 [[[
-CmChangePhoneCommand >> newPhone: anObject
+EgChangePhoneCommand >> newPhone: anObject
 	newPhone := anObject
 ]]]
 
 [[[
-CmChangePhoneCommand >> newPhone
+EgChangePhoneCommand >> newPhone
 	^ newPhone 
 ]]]
 
 [[[
-CmChangePhoneCommand >> initialize
+EgChangePhoneCommand >> initialize
 	super initialize.
 	self
-		basicName: 'Change phone';
-		basicDescription: 'Change the phone number of the contact.'
+		name: 'Change phone';
+		description: 'Change the phone number of the contact.'
 ]]]
 
 [[[
-CmChangePhoneCommand >> execute
+EgChangePhoneCommand >> execute
 	self selectedContact phone: self contactBookPresenter newPhone.
 	self contactBookPresenter updateView
 ]]]
 
-We extend with the method ==newPhone== the presenter to support the definition of the new phone number. 
+We add ==ContactBookPresenter== with the method ==newPhone== the presenter to support the definition of the new phone number. 
+The point here is not that this is method is or not packaged with the new command.
 
 [[[
 EgContactBookPresenter >> newPhone
@@ -330,23 +331,28 @@ EgContactBookPresenter >> newPhone
 		title: 'Set new phone for contact'.
 	(phone matchesRegex: '\d\d\d\s\d\d\d')
 		ifFalse: [ 
-			InvalidUserInput signal: 'The phone number is not well formated. 
+			SpInvalidUserInput signal: 'The phone number is not well formated. 
 Should match "\d\d\d\s\d\d\d"' ].
 	^ phone
 ]]]
 
-The last missing piece is the declaration of the extension. This one is done using the pragma ==\<extensionCommands\>== on the class side of the presenter class as follows:
+The last missing piece is the declaration of the extension. 
+This one is done using the pragma ==\<extensionCommands\>== on the class side of the presenter class as follows:
 
 Here we see that using slash (== / ==), we can select the group in which we want to add the item. 
 [[[
 EgContactBookPresenter class >> 
 	changePhoneCommandWith: presenter 
-	forRootGroup: aCmCommandsGroup
+	forRootGroup: aCommandsGroup
 	<extensionCommands>
 	
-	(aCmCommandsGroup / 'Context Menu' / 'Edition')
-		register: (CmChangePhoneCommand forSpec context: presenter)
+	(aCommandsGroup / 'Context Menu' / 'Edition')
+		register: (EgChangePhoneCommand forSpec context: presenter)
 ]]]
+
+
+
+
 
 !!! Managing Icons and Shortcuts
 
