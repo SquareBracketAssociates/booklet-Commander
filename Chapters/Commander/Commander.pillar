@@ -129,9 +129,6 @@ cmd := EgAddContactCommand new context: presenter.
 cmd execute
 ]]]
 
-
-
-
 !!! Adding the remove contact command
 
 We define now another command to remove a command. 
@@ -139,36 +136,57 @@ This example is interesting because it does not involve any UI interaction.
 It shows that a command is not necessarily linked to UI interaction.
 
 [[[
-CmRemoveContactCommand >> initialize
+EgContactBookCommand subclass: #EgRemoveContactCommand
+	instanceVariableNames: ''
+	classVariableNames: ''
+	package: 'EgContactBook'
+]]]
+
+[[[
+EgRemoveContactCommand >> initialize
 	super initialize.
 	self
-		basicName: 'Remove'; 
-		basicDescription: 'Removes the selected contact from the contact book.'
+		name: 'Remove'; 
+		description: 'Removes the selected contact from the contact book.'
 ]]]
 
 This command definition illustrates how we can control when a command should or not be executed. The method ==canBeRun== allows one to specify such condition.
 
 [[[
-CmRemoveContactCommand >> canBeRun
+EgRemoveContactCommand >> canBeExecuted
 	^ self context isContactSelected
 ]]]
 
 The method ==execute== is straightforward.
 [[[
-CmRemoveContactCommand >> execute
-	self contactBookPresenter removeContact: self selectedContact.
+EgRemoveContactCommand >> execute
+	self contactBook removeContact: self selectedContact.
 	self contactBookPresenter updateView
 ]]]
 
-!!! Turning commands into menu items
+The following test validates the correct execution of the command.
 
-In Spec, commands that are transformed into menu items are structured into a tree of command instances. The class method ==buildCommandsGroupWith:forRoot:== is a hook to let the presenter define the root of the command instance tree.
+[[[
+EgContactCommandTest >> testRemoveContact
+
+	self assert: presenter contactBook size equals: 3.
+	presenter table selectIndex: 1.
+	(EgRemoveContactCommand new context: presenter) execute.
+	self assert: presenter contactBook size equals: 2
+]]]
+
+
+!!! Turning commands into menu items
+Now that we have our commands we would like to reuse them and turn them into menus. 
+In Spec, commands that are transformed into menu items are structured into a tree of command instances. 
+The class method ==buildCommandsGroupWith:forRoot:== of ==SpPresenter== is a hook to let  presenters define the root of the command instance tree.
 
 A command is transformed into a command for Spec using the message ==forSpec==.
 We will show later that we can add UI specific information to a command such as an icon and a shortcut.
 
-The method ==buildCommandsGroupWith:forRoot:== registers commands to which the presenter instance is passed as context. Note that here we just add plain commands, but 
-we can also create groups. This is also in this method that we will specify toolbar.
+The method ==buildCommandsGroupWith:forRoot:== registers commands to which the presenter instance is passed as context. 
+Note that here we just add plain commands, but we can also create groups. 
+This is also in this method that we will specify toolbar.
 
 [[[
 EgContactBookPresenter class >> 
@@ -176,27 +194,27 @@ EgContactBookPresenter class >>
 	forRoot: rootCommandGroup
 	
 	rootCommandGroup 
-		register: (CmAddContactCommand2 forSpec context: presenter);
-		register: (CmRemoveContactCommand2 forSpec context: presenter)
+		register: (EgAddContactCommand forSpec context: presenter);
+		register: (EgRemoveContactCommand forSpec context: presenter)
 ]]]
 
-We have now to attach the root of the command tree to the table. 
-This is what what we do with the new line in the ==initializeWidgets== method. 
+We have now have to attach the root of the command tree to the table. 
+This is what what we do with the new line in the ==initializePresenters== method. 
 Notice that we have the full control and as we will show we could select a subpart of the tree (using the message ==/==) and defining as root for given component.
 
 
 [[[
-EgContactBookPresenter >> initializeWidgets
+EgContactBookPresenter >> initializePresenters
 	table := self newTable.
 	table 
-		addColumn: (StringTableColumn title: 'Name' evaluated: #name);
-		addColumn: (StringTableColumn title: 'Phone' evaluated: #phone).
+		addColumn: (SpStringTableColumn title: 'Name' evaluated: #name);
+		addColumn: (SpStringTableColumn title: 'Phone' evaluated: #phone).
 	table contextMenu: [ self rootCommandsGroup beRoot asMenuPresenter ].
-	table items: contactBook contents.
+	table items: contactBook contacts.
 ]]]
 
-Reopening the interface you should see the menu items as shown in Figure *@withmenu*.
-As we will show later we could even replace a menu item by another one, changing its name, or icon in place. 
+Reopening the interface ==(EgContactBookPresenter on: EgContactBook coworkers) openWithSpec== you should see the menu items as shown in Figure *@withmenu*.
+As we will show later we could even replace a menu item by another one, changing its name, or icon in place.
 
 +With two menu items.>figures/withMenus.png|width=60|label=withmenu+
 
@@ -204,13 +222,14 @@ As we will show later we could even replace a menu item by another one, changing
 !!! Introducing groups
 
 Commands can be managed in groups and such groups can be turned into corresponding menu item sections.
-Here we give an example of such grouping.  Notice the message ==asSpecGroup== sent to a group.
+Here we give an example of such grouping. 
+Note that the message ==asSpecGroup== sent to a group.
 
 [[[
 EgContactBookPresenter class >> buildAddingGroupWith: presenter
 	^ (CmCommandGroup named: 'Adding') asSpecGroup
-		basicDescription: 'Commands related to contact addition.';
-		register: (CmAddContactCommand forSpec context: presenter);
+		description: 'Commands related to contact addition.';
+		register: (EgAddContactCommand forSpec context: presenter);
 		beDisplayedAsGroup;
 		yourself
 ]]]
@@ -218,8 +237,8 @@ EgContactBookPresenter class >> buildAddingGroupWith: presenter
 [[[
 EgContactBookPresenter class >> buildRemovingGroupWith: presenter
 	^ (CmCommandGroup named: 'Removing') asSpecGroup
-		basicDescription: 'Commands related to contact removal.';
-		register: (CmRemoveContactCommand forSpec context: presenter);
+		description: 'Commands related to contact removal.';
+		register: (EgRemoveContactCommand forSpec context: presenter);
 		beDisplayedAsGroup;
 		yourself
 ]]]
@@ -235,24 +254,32 @@ EgContactBookPresenter class >> buildContextualMenuGroupWith: presenter
 Finally we revisit the hook ==buildCommandsGroupWith:forRoot:== to 
 
 [[[
-EgContactBookPresenter class >> buildCommandsGroupWith: presenter forRoot: rootCommandGroup
+EgContactBookPresenter class >> 
+	buildCommandsGroupWith: presenter 
+	forRoot: rootCommandGroup
+	
 	rootCommandGroup
 		register: (self buildContextualMenuGroupWith: presenter)
 ]]]
 
-To show you that we can also select a part of the command tree we select the 'Context Menu' group and we declare it as the root of the table menu.
+To show you that we can also select a part of the command tree we select the =='Context Menu'== group and we declare it as the root of the table menu.
 
 [[[
-initializeWidgets
+initializePresenters
+
 	table := self newTable.
 	table 
-		addColumn: (StringTableColumn title: 'Name' evaluated: #name);
-		addColumn: (StringTableColumn title: 'Phone' evaluated: #phone).
+		addColumn: (SpStringTableColumn title: 'Name' evaluated: #name);
+		addColumn: (SpStringTableColumn title: 'Phone' evaluated: #phone).
 	
 	table contextMenu: [ (self rootCommandsGroup / 'Context Menu') beRoot asMenuPresenter ].
-	table items: contactBook contents.	
+	table items: contactBook contacts
 ]]]	
-		
+
+
++With two menu items with groups.>figures/withMenus.png|width=60|label=withmenu+
+
+
 !!! Extending menus
 
 Building menu is nice, but sometimes we need to add a menu into an existing one. Commander supports this as we show it now. 
