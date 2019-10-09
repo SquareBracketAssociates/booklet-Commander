@@ -336,72 +336,112 @@ Should match "\d\d\d\s\d\d\d"' ].
 	^ phone
 ]]]
 
-The last missing piece is the declaration of the extension. 
+The last missing piece is the declaration of the extension.
 This one is done using the pragma ==\<extensionCommands\>== on the class side of the presenter class as follows:
 
-Here we see that using slash (== / ==), we can select the group in which we want to add the item. 
+Here we see that using slash (== / ==), we can select the group in which we want to add the item.
+
 [[[
 EgContactBookPresenter class >> 
 	changePhoneCommandWith: presenter 
 	forRootGroup: aCommandsGroup
 	<extensionCommands>
 	
-	(aCommandsGroup / 'Context Menu' / 'Edition')
+	(aCommandsGroup / 'Context Menu')
 		register: (EgChangePhoneCommand forSpec context: presenter)
 ]]]
 
 
-
++With menu extension.>figures/withmenuExtension.png|width=60|label=withmenuExtension+
 
 
 !!! Managing Icons and Shortcuts
 
-By default a command does not know about Spec specific behavior.
-Obviously you want to have icon and shortcut binding when you are designing
-The Spec project extends Commander so that we can define commands with specific 
-Spec spec.
-Let us see how it works from a user perspective.
-The framework offers two method to set icon and shortcut key ==asSpecCommandWithIconNamed:shortcutKey:== and ==asSpecCommandWithShortcutKey:==.
+By default a command does not know about Spec specific behavior, this is because a command does not have to be linked to UI.
+Now obviously you want to have icons and shortcut bindings when you are designing an interactive application.
+
+Commander supports the addition of icons and shortcut key to commands.
+Let us see how it works from a user perspective. 
+The framework offers two methods to set icon and shortcut key ==iconName:== and ==shortcutKey:== and we should specialize the method ==aSpecCommand== as follows: 
+
+[[[
+EgRemoveContactCommand >> asSpecCommand
+
+	^ super asSpecCommand
+		iconName: #removeIcon;
+		shortcutKey: $x meta;
+		yourself
+]]]
 
 
 [[[
-asSpecCommandWithIconNamed: aSymbol shortcutKey: aKMKeyCombination
+EgRemoveContactCommand >> asSpecCommand
+
+	^ super asSpecCommand
+		shortcutKey: $n meta;
+		iconName: #changeAdd;
+		yourself
+]]]
+
+Note that the commands are created using the message ==forSpec== and this is this message that takes care about the calling of ==asSpecCommand==.
+
+!!! In place customisation
+
+Commander supports also the reuse and in place customisation of commands.
+It means that the instance representing a command can be modified on the spot: for example its name or description can be adapted to the exact 
+use context.
+Here is an example that shows that we adapt twice the same command. 
+
+Let us define a really simple and generic command which will simply inspect the object. 
+
+[[[
+EgContactBookCommand subclass: #EgInspectCommand
+	instanceVariableNames: ''
+	classVariableNames: ''
+	package: 'EgContactBook-Extensions'
 ]]]
 
 [[[
-asSpecCommandWithShortcutKey: aKMKeyCombination
+EgInspectCommand >> initialize
+	super initialize.
+	self
+		name: 'Inspect';
+		description: 'Inspect the context of this command.'
 ]]]
 
+[[[
+EgInspectCommand >> execute
+	self context inspect
+]]]
 
-
-
-
-
-!!! Reusing generic commands
-
-Commander supports also the reuse and in place customisation of generic commands.
-Here is an example that shows that we adapt twice the same command. The context is computed at the moment the command is executed and The name and description can be adapted for its specific usage.
+Using a block the context is computed at the moment the command is executed and the name and description can be adapted for its specific usage as shown in Figure *@inPlaceCustomisation*
 
 [[[
 EgContactBookPresenter class >>	
 	extraCommandsWith: presenter 
 	forRootGroup: aCmCommandsGroup
+	
 	<extensionCommands>
 	
 	aCmCommandsGroup / 'Context Menu'
-		register: 
+		register:
 			((CmCommandGroup named: 'Extra') asSpecGroup
-				basicDescription: 'Extra commands to help during development.';
-				register: ((CmInspectCommand forSpec context: [ presenter selectedContact ]) 
-								basicName: 'Inspect contact';
-								basicDescription: 'Open an inspector on the selected contact.';
-								yourself);
-				register: ((CmInspectCommand forSpec context: [ presenter contactBook ])
-								basicName: 'Inspect contact book';
-								basicDescription: 'Open an inspector on the contact book.';
-								yourself);
-		yourself)
+				description: 'Extra commands to help during development.';
+				register:
+					((EgInspectCommand forSpec context: [ presenter selectedContact ])
+						name: 'Inspect contact';
+						description: 'Open an inspector on the selected contact.';
+						iconName: #smallFind;
+						yourself);
+				register:
+					((EgInspectCommand forSpec context: [ presenter contactBook ])
+						name: 'Inspect contact book';
+						description: 'Open an inspector on the contact book.';
+						yourself);
+				yourself)
 ]]]
+
++With menu extension.>figures/inPlaceCustomisation.png|width=90|label=inPlaceCustomisation+
 
 !!! Managing a menu bar
 
