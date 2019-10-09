@@ -216,8 +216,7 @@ EgContactBookPresenter >> initializePresenters
 Reopening the interface ==(EgContactBookPresenter on: EgContactBook coworkers) openWithSpec== you should see the menu items as shown in Figure *@withmenu*.
 As we will show later we could even replace a menu item by another one, changing its name, or icon in place.
 
-+With two menu items.>figures/withMenus.png|width=60|label=withmenu+
-
++With two menu items with groups.>figures/withMenus.png|width=60|label=withmenu+
 
 !!! Introducing groups
 
@@ -262,10 +261,15 @@ EgContactBookPresenter class >>
 		register: (self buildContextualMenuGroupWith: presenter)
 ]]]
 
+Reopening the interface ==(EgContactBookPresenter on: EgContactBook coworkers) openWithSpec== you should see the menu items inside a =='Context Menu'== as shown in Figure *@withmenuContext*.
+
++With a context menu.>figures/withmenuContext.png|width=60|label=withmenuContext+
+
 To show you that we can also select a part of the command tree we select the =='Context Menu'== group and we declare it as the root of the table menu.
+In such case you will not see the 'Context Menu' anymore. 
 
 [[[
-initializePresenters
+EgContactBookPresenter >> initializePresenters
 
 	table := self newTable.
 	table 
@@ -276,19 +280,16 @@ initializePresenters
 	table items: contactBook contacts
 ]]]	
 
-
-+With two menu items with groups.>figures/withMenus.png|width=60|label=withmenu+
-
-
 !!! Extending menus
 
-Building menu is nice, but sometimes we need to add a menu into an existing one. Commander supports this as we show it now. 
+Building menu is nice, but sometimes we need to add a menu into an existing one. 
+Commander supports this as we show it now. 
 
-Imagine that we have a new functionality that we want to add to the contact book and that this behavior is packaged in another package. First we will define a new command
-and second we will show how we can extend the existing menu to add a new menu item. 
+Imagine that we have a new functionality that we want to add to the contact book and that this behavior is packaged in another package. 
+First we will define a new command and second we will show how we can extend the existing menu to add a new menu item. 
 
 [[[
-EgContactBookCommand subclass: #CmChangePhoneCommand
+EgContactBookCommand subclass: #EgChangePhoneCommand
 	instanceVariableNames: 'newPhone'
 	classVariableNames: ''
 	package: 'Commander2-ContactBook-Extensions'
