@@ -1,30 +1,44 @@
 !!Commander: a Powerful and Simple Command Framework
 
-Commander is a library originally developed by Denis Kudriashov. 
-Commander 2.0 is the second iteration of such library designed and developed by Julien Delplanque and Stéphane Ducasse. 
-Note that Commander20 is not compatible with Commander but this is really easy to migrate from Commander to Commander 20. 
-This document describes Commander 20 in the context of Spec20, the user interface building framework.
-We present a little example application a contact book. 
+Commander was a library originally developed by Denis Kudriashov. 
+Commander 2.0 is the second iteration of such a library. 
+It has designed and developed by Julien Delplanque and Stéphane Ducasse.
+Note that Commander 2.0 is not compatible with Commander but this is really easy to migrate from Commander to Commander 2.0.
+We describe Commander 2.0 in the context of Spec 2.0, the user interface building framework.
+From then on, when we mention Commander we refer to Commander 2.0.
+In addition we show how to extend Commander to other needs.
+
+
 
 !!! Commands
 
-Commander models application actions as first class objects following the Command design pattern. 
+Commander models application actions as first class objects following the Command design pattern.
 With Commander you can express commands and use them to generate menus, toolbar but also to script an application from the command line.
 
 Every action is implemented as a separate command class (subclass of ==CmCommand==) with an ==execute== method and all state required for execution.
+The superclass defines the context in which the command should be executed. 
+Then the class ==CmCommand== introduces name and description.
+
++Basic hierarchy.>figures/BasicCommand.pdf|width=60|label=first+
+
+We will show later that for UI framework we need more information such as an icon and shortcut description.
+In addition we will present how commands can be decorated with extra functionality in an extensible way.
+
+
 Note that nothing prevents you to define commands by creating instances and filling them up with the same information.
 If you do so, you cannot use classes to dispatch and should put in place other mechanisms. 
 In this chapter we only discuss how to define class representing commands and use them. 
 
-
-+Basic hierarchy.>figures/firstVersion.png|width=60|label=first+
-
-
-
-
 !!! Defining commands
 A command is a simple object instance of a subclass of the class ==CmCommand==.
-It has a description, a name (this name can be either static or dynamic as we will later on). In addition it has a context from which it extracts information to execute itself. But let us have a look at examples. 
+It has a description, a name (this name can be either static or dynamic as we will shown later on). 
+In addition, it has a context from which it extracts information to execute itself. 
+
+Let us have a look at examples. 
+We will define some commands for the ContactBook application and illustrate how they can be turned into 
+menu and menubar.
+
+!!! Adding some convenience methods
 
 For convenience reasons, we define a common superclass named ==EgContactBookCommand== to all the commands  of the contact book application.
 
@@ -32,9 +46,8 @@ For convenience reasons, we define a common superclass named ==EgContactBookComm
 CmCommand subclass: #EgContactBookCommand
 	instanceVariableNames: ''
 	classVariableNames: ''
-	package: 'Commander2-ContactBook-Commands'
+	package: 'EgContactBook'
 ]]]
-
 
 
 We define a simple helper method to make the code more readable
@@ -43,7 +56,7 @@ EgContactBookCommand >> contactBookPresenter
 	^ self context
 ]]]
 
-For the same reason, we define another helper to access the contact book.
+For the same reason, we define another helper to access the contact book and the selected item.
 [[[
 EgContactBookCommand >> contactBook
 	^ self contactBookPresenter contactBook
@@ -65,10 +78,10 @@ EgContactBookCommand >> hasSelectedContact
 
 We define a subclass to define the add a contact command. 
 [[[
-EgContactBookCommand subclass: #CmAddContactCommand
+EgContactBookCommand subclass: #EgAddContactCommand
 	instanceVariableNames: ''
 	classVariableNames: ''
-	package: 'Commander2-ContactBook-Commands'
+	package: 'EgContactBook'
 ]]]
 
 [[[
@@ -95,17 +108,29 @@ We should define the method ==updateView== to refresh the contents of the table.
 
 [[[
 EgContactBookPresenter >> updateView
-	table items: contactBook contents
+	table items: contactBook contacts
 ]]]
 
 Now in the inspect pane we can simply execute the command as follows:
 
 [[[
-(CmAddContactCommand new context: self) execute
+(EgAddContactCommand new context: self) execute
 ]]]
 
 Excuting the command should ask you to give a name and a phone number
 and will get added to the list.
+
+We can also execute the following snippet.
+
+[[[
+| presenter cmd |
+presenter := EgContactBookPresenter on: EgContactBook coworkers.
+cmd := EgAddContactCommand new context: presenter.
+cmd execute
+]]]
+
+
+
 
 !!! Adding the remove contact command
 
@@ -295,16 +320,15 @@ EgContactBookPresenter class >>
 		register: (CmChangePhoneCommand forSpec context: presenter)
 ]]]
 
-!!! Decorating commands
+!!! Managing Icons and Shortcuts
 
-By default a command does not know about Spec specific behavior. It can be used in other contexts such as scripting libraries as this was the case with Gofer (Gofer was a scripting API to script monticello).
+By default a command does not know about Spec specific behavior.
+Obviously you want to have icon and shortcut binding when you are designing
+The Spec project extends Commander so that we can define commands with specific 
+Spec spec.
+Let us see how it works from a user perspective.
+The framework offers two method to set icon and shortcut key ==asSpecCommandWithIconNamed:shortcutKey:== and ==asSpecCommandWithShortcutKey:==.
 
-The Spec project extends Commander so that we can extend commands with specific 
-aspects related to Spec. It uses the fact that Commander allows us to decorate commands with decoration that are polymorphic to commands. 
-
-Let us see how it works from a user perspective. 
-
-The framework offers two method to set icon and shortcut key. 
 
 [[[
 asSpecCommandWithIconNamed: aSymbol shortcutKey: aKMKeyCombination
@@ -313,6 +337,8 @@ asSpecCommandWithIconNamed: aSymbol shortcutKey: aKMKeyCombination
 [[[
 asSpecCommandWithShortcutKey: aKMKeyCombination
 ]]]
+
+
 
 
 
@@ -377,3 +403,45 @@ EgContactBookPresenter >> initializeWidgets
 	table items: contactBook contents.
 	menuBar := (self rootCommandsGroup / 'MenuBar') asMenuBarPresenter.
 ]]]	
+
+
+!! Tips and Tricks
+
+iconProvider: 
+
+PharoLauncher
+
+
+!! For the Framework designers
+
+
+The design of Commander has been to favor strong extensibility by using a simple decorator pattern. 
+The idea is to propose a simple API to users while giving the possibility to modularly extend the framework. 
+We explain some of the key aspects so that developers of other frameworks can use Commander as the root of their
+solution.
+
++Full design.>figures/DesignAdvanced.pdf|width=60|label=advanced+
+
+
+
+!!! Decorating commands
+
+By default a command does not know about Spec specific behavior. 
+It can be used in other contexts such as scripting libraries as this was the case with Gofer (Gofer was a scripting API to script monticello).
+The behavior of PharoLauncher will be exposed as Clap command-line using the fact that PharoLauncher operations are reified as commands.
+
+The Spec project extends Commander so that we can extend commands with specific 
+aspects related to Spec. It uses the fact that Commander allows us to decorate commands with decoration that are polymorphic to commands. 
+
+Let us see how it works from a user perspective. 
+
+The framework offers two method to set icon and shortcut key. 
+
+[[[
+asSpecCommandWithIconNamed: aSymbol shortcutKey: aKMKeyCombination
+]]]
+
+[[[
+asSpecCommandWithShortcutKey: aKMKeyCombination
+]]]
+

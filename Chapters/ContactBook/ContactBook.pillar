@@ -290,19 +290,22 @@ and you can send the ==newContact== message as shown in Figure *@inspector*.
 
 +Playing inside the inspector.>figures/inspector.png|width=60|label=inspector+
 
+
+
+
+!!! Some extra methods
+
 We will also defined the methods ==isContactSelected== and ==selectedContact== to know if a contact is currently selected and to return it. It will help us later to add contact just after the currently selected contact.
 
 [[[
 EgContactBookPresenter >> isContactSelected
-	^ table selection selectedItem notNil
+	^ self table selectedItems isNotEmpty
 ]]]
 
 [[[
 EgContactBookPresenter >> selectedContact
 	^ table selection selectedItem
 ]]]
-
-!!! Improving a bit 
 
 !!! Conclusion 
 
