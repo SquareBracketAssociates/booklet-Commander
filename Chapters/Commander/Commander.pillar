@@ -390,7 +390,7 @@ Note that the commands are created using the message ==forSpec== and this is thi
 Commander supports also the reuse and in place customisation of commands.
 It means that the instance representing a command can be modified on the spot: for example its name or description can be adapted to the exact 
 use context.
-Here is an example that shows that we adapt twice the same command. 
+Here is an example that shows that we adapt twice the same command.
 
 Let us define a really simple and generic command which will simply inspect the object. 
 
@@ -446,7 +446,10 @@ EgContactBookPresenter class >>
 !!! Managing a menu bar
 
 Commander supports also menu bar definition.
-The logic is the same than for contextual menus: with define a group and register it.
+The logic is the same than for contextual menus: we define a group and register it under a given and we specify to the presenter to use this group 
+as a menubar.
+
+
 
 [[[
 EgContactBookPresenter class >> buildMenuBarGroupWith: presenter
@@ -471,8 +474,8 @@ And we hook it into the widget as the last line of this following method. Notice
 EgContactBookPresenter >> initializeWidgets
 	table := self newTable.
 	table 
-		addColumn: (StringTableColumn title: 'Name' evaluated: #name);
-		addColumn: (StringTableColumn title: 'Phone' evaluated: #phone).
+		addColumn: (SpStringTableColumn title: 'Name' evaluated: #name);
+		addColumn: (SpStringTableColumn title: 'Phone' evaluated: #phone).
 	table contextMenu: [ (self rootCommandsGroup / 'Context Menu') beRoot asMenuPresenter ].
 	table items: contactBook contents.
 	menuBar := (self rootCommandsGroup / 'MenuBar') asMenuBarPresenter.
