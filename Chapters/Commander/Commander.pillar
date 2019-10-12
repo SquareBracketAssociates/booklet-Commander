@@ -554,6 +554,8 @@ EgContactBookPresenter class >> defaultSpec
 			yourself
 ]]]
 
++With menubar.>figures/withmenubar.png|width=90|label=inPlaceCustomisation+
+
 
 !!! Conclusion
 
