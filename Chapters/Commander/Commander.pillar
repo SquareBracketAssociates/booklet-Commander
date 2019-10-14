@@ -604,6 +604,10 @@ The integration of Commander into Spec20 allows one to access features that are 
 
 - ==beDisplayedOnRightSide== and ==beDisplayedOnLeftSide==. Julien help please the right side of what?
 
+!!! Contexts can be dynamic
+
+If you want your command to work on a context that will change at execution, pass a block as argument of the ==context:== message.
+
 
 !!! Dynamic name and description
 
@@ -611,6 +615,22 @@ Commander allows you to customize the name and description of a command.
 The idea is to let you provide description or name that take advantage of the context in which they are used.
 
 Julien when dynamicDescription is invoked?
+
+!!! Toolbar
+
+Commands can also be turned into a toolbar
+
+
+!!! Registration and navigation
+
+Commands are often grouped together to act as menu groups. 
+In the previous chapter we show that 
+registerFirst:
+registerLast:
+register:after: register:before:
+register: aCommandOrGroup insteadOf:
+unregister:
+
 
 
 !! For framework designers
@@ -622,7 +642,7 @@ solution.
 
 +Full design.>figures/DesignAdvanced.pdf|width=60|label=advanced+
 
-beDisplayedOnLeftSide
+
 !!! Decorating commands
 
 By default a command does not know about Spec specific behavior. 
@@ -632,15 +652,49 @@ The behavior of PharoLauncher will be exposed as Clap command-line using the fac
 The Spec project extends Commander so that we can extend commands with specific 
 aspects related to Spec. It uses the fact that Commander allows us to decorate commands with decoration that are polymorphic to commands. 
 
-Let us see how it works from a user perspective. 
+The class ==CmUICommand== is a decorator of command dedicated for UI related state and actions. 
+As we saw in previous chapters
+- State: icon, shortcutKey
+- Behavior: defining icon, and shorcutKey
 
-The framework offers two method to set icon and shortcut key. 
+==asSpecCommand==
 
+The method ==asSpecCommand== decorates a command to define extra behavior responsible for the addition 
+of ui related functionality and state. 
+
+The implementation is the following one
+(check new implementation)
 [[[
-asSpecCommandWithIconNamed: aSymbol shortcutKey: aKMKeyCombination
+CmUICommand >> asSpecCommand
+	"Subclasses might override this method to define default icon and shortcut."
+	^ self decorateWith: SpUICommand
 ]]]
 
+
+!!! Decorating group of commands
+
+
+asToolbarPresenter
+
 [[[
-asSpecCommandWithShortcutKey: aKMKeyCombination
+asToolbarPresenter
+	^ SpToolBarPresenterBuilder new
+		visit: self;
+		toolbarPresenter
+
 ]]]
 
+
+!!! Example of Visitor: toolbarBuilder
+
+[[[
+visitCommand: aCmCommandEntry
+	aCmCommandEntry positionStrategy
+		addButton: (SpToolBarButton new
+						label: aCmCommandEntry name;
+						help: aCmCommandEntry description;
+						icon: aCmCommandEntry icon;
+						action: [ aCmCommandEntry execute ];
+						yourself)
+		toToolbar: self toolbarPresenter
+]]]
