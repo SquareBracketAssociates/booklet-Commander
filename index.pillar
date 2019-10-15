@@ -21,4 +21,4 @@ ${inputFile:path=Chapters/ContactBook/ContactBook.pillar}$
 
 ${inputFile:path=Chapters/Commander/Commander.pillar}$
 
-
+${inputFile:path=Chapters/Commander/CommanderDesign.pillar}$
