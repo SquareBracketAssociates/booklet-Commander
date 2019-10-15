@@ -1,11 +1,12 @@
 !! For framework designers
 
-The design of Commander has been to favor strong extensibility by using a simple decorator pattern.
+The design of Commander favors strong extensibility while keeping its use simple. The extensibility is brought in by using a simple decorator pattern.
 The idea is to propose a simple API to users while giving the possibility to modularly extend the framework.
-We explain some of the key aspects so that developers of other frameworks can use Commander as the root of their
-solution.
+In this chapter, we explain the key aspects of Commander so that developers of other frameworks can use it as the root of their
+solution. 
+We show the integration of Commander and Spec as a concrete use case.
 
-+Full design.>figures/DesignAdvanced.pdf|width=60|label=advanced+
++Full design.>figures/DesignAdvanced.pdf|width=90|label=advanced+
 
 
 !!! Decorating commands

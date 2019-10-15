@@ -597,6 +597,8 @@ PhLLaunchImageCommand2 >> iconNamed: aName
 
 !!! Extra Spec behavior
 
+SD: Julien I need help
+
 The integration of Commander into Spec20 allows one to access features that are only available for menu items,
 
 - ==beDisabledWhenCantBeRun==.  Julien help please. How we know that it cannot be run? How do I specify the condition? Can I specify the condition?  Pay attention  that this is static feature in the sense that it is evaluated at the command creation. Is it true?
@@ -608,26 +610,36 @@ The integration of Commander into Spec20 allows one to access features that are 
 
 If you want your command to work on a context that will change at execution, pass a block as argument of the ==context:== message.
 
+SD: put an example
 
 !!! Dynamic name and description
 
 Commander allows you to customize the name and description of a command. 
 The idea is to let you provide description or name that take advantage of the context in which they are used.
 
-Julien when dynamicDescription is invoked?
+SD: Julien when dynamicDescription is invoked?
 
 !!! Toolbar
 
-Commands can also be turned into a toolbar
+Commands can also be turned into a toolbar using the message ==asToolbarPresenter== sent to a group of commands.
 
+SD: Ask christophe for an example
 
 !!! Registration and navigation
 
 Commands are often grouped together to act as menu groups. 
-In the previous chapter we show that 
-registerFirst:
-registerLast:
-register:after: register:before:
-register: aCommandOrGroup insteadOf:
-unregister:
+In the previous chapter we show that a group is structured as a composite tree of groups and commands. 
+Adding elements to such composite is done via  the messages ==register: aGroupOrCommand==. 
+
+
+We show that the message ==/== navigates the tree and access the corresponding subtree.
+
+SD: Show add an example here
+
+The Spec extension supports also the notion of order and substitution as follows: 
+- ==registerFirst: aGroupOrCommand==
+- ==registerLast: aGroupOrCommand==
+- ==register: aGroupOrCommand after: another== and ==register:aGroupOrCommand before: another==
+- ==register: aGroupOrCommand insteadOf: another==
+-unregister:
 
