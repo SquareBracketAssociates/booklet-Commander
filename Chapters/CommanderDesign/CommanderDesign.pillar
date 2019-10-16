@@ -42,12 +42,12 @@ Second, the package containing the Spec related code extends the class ==CmComma
 The method ==asSpecCommand== decorates a command to define extra behavior responsible for the addition 
 of ui related functionality and state. 
 
-+Spec decorations and use.>figures/DecoratorWithSpec.pdf|width=60|label=specdecorator+
++Spec decorations and use.>figures/DecoratorWithSpec.pdf|width=45|label=specdecorator+
 
 The implementation is the following one
 [[[
 CmCommand >> asSpecCommand
-	"Subclasses might override this method to define default icon and shortcut."
+	
 	^ self decorateWith: SpCommand
 ]]]
 
@@ -85,23 +85,54 @@ EgAddContactCommand >> asSpecCommand
 ]]]
 
 !!! Decorating group of commands
+Commander uses the same logic for group of commands as shown by Figure *@group*.
+Let us describe the hierarchy.
 
+- The class ==CmAbstractCommandGroup== is an abstract root defining elementary operation of group.
+- The class ==CmCommandGroup== is the central class from an end-user point of view.
+- The class ==CmCommandGroupDecorator== is just a decorator. 
 
-asToolbarPresenter
++Group and group decorators.>figures/DecoratorGroup.pdf|width=45|label=group+
+
+On top of this the class ==CmUICommandGroup== extends the basic decorator with ui related behavior as shown in Figure *@groupspec*.
+
+!!! Spec decoration 
+
+The Spec extension then is based on the definition of a specific decorator ==SpCommandGroup== and the method ==asSpecGroup== defined as follows: 
 
 [[[
-asToolbarPresenter
+CmCommandGroup >> asSpecGroup
+	^ self decorateWith: SpCommandGroup
+]]]
+
+The class ==SpCommandGroup== defines methods that are producing Spec object often using the 
+
+[[[
+SpCommandGroup >> asMenuPresenter
+	^ SpMenuPresenterBuilder new
+		visit: self;
+		menuPresenter
+]]]
+
++Spec group and group decorators.>figures/DecoratorGroupSpec.pdf|width=55|label=groupspec+
+
+
+!!! Example of Visitor: toolbarBuilder
+
+Commander defines a simple visitor. This visitor is used in many places. Here we present the ==SpToolBarPresenterBuilder==
+responsible for turning groups into a toolbar. 
+
+
+[[[
+SpCommandGroup >> asToolbarPresenter
 	^ SpToolBarPresenterBuilder new
 		visit: self;
 		toolbarPresenter
 
 ]]]
 
-
-!!! Example of Visitor: toolbarBuilder
-
 [[[
-visitCommand: aCmCommandEntry
+SpvisitCommand: aCmCommandEntry
 	aCmCommandEntry positionStrategy
 		addButton: (SpToolBarButton new
 						label: aCmCommandEntry name;
@@ -113,6 +144,12 @@ visitCommand: aCmCommandEntry
 ]]]
 
 
-!!! Full design view
 
-+Full design.>figures/DesignAdvanced.pdf|width=90|label=advanced+
++Full design: Core, UI support and Spec integration.>figures/DesignAdvanced.pdf|width=90|label=advanced+
+
+!!! Conclusion 
+
+To conclude this chapter Figure *@advanced* gives a full overview of the design and layers supported by Commander.
+We show that Commander proposes a simple way for user to express commands while at the same time commands can be modularly 
+decorated to add extra behavior. 
+Commander20 is a central piece of Pharo infrastructure and all the other commands solutions will be ported to it. 
