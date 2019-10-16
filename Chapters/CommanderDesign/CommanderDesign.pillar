@@ -6,7 +6,7 @@ In this chapter, we explain the key aspects of Commander so that developers of o
 solution. 
 We show the integration of Commander and Spec as a concrete use case.
 
-+Full design.>figures/FirstDecorator.pdf|width=90|label=decorator+
++Commands and command decorators.>figures/FirstDecorator.pdf|width=90|label=decorator+
 
 !!! Decorating commands
 
@@ -14,8 +14,12 @@ By default a command does not know about Spec specific behavior.
 It can be used in other contexts such as scripting libraries as this was the case with Gofer (Gofer was a scripting API to script monticello).
 Another example is that the core behavior of PharoLauncher will be exposed as Clap command-line using the fact that PharoLauncher propose commands.
 
-The Spec project extends Commander so that we can extend commands with specific 
-aspects related to Spec. It uses the fact that Commander allows us to decorate commands with decoration that are polymorphic to commands. 
+The Spec project extends Commander so that we use commands with specific aspects related to Spec.
+It uses the fact that Commander allows us to decorate commands with decoration that are polymorphic to commands as shown in Figure *@decorator*.
+
+
+The common abstract root class ==CmAbstractCommand== defines way to manage the context and execute a command.
+- 
 
 The class ==CmUICommand== is a decorator of command dedicated for UI related state and actions. 
 As we saw in previous chapters
