@@ -14,7 +14,7 @@ Then we show how commands can be defined.
 In the final chapter we discuss the design of the framework with more details.
 
 The code used of the contactBook is available at *https://github.com/Ducasse/EgContactBook*.
-The code contains tests that are not listing in this booklet but encourage to read.
+The code contains tests that are not listing in this booklet but we encourage you to read them.
 
 
 ${inputFile:path=Chapters/ContactBook/ContactBook.pillar}$

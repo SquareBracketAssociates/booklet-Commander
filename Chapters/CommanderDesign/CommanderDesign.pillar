@@ -6,7 +6,7 @@ In this chapter, we explain the key aspects of Commander so that developers of o
 solution. 
 We show the integration of Commander and Spec as a concrete use case.
 
-+Commands and command decorators.>figures/FirstDecorator.pdf|width=90|label=decorator+
+
 
 !!! Decorating commands
 
@@ -18,34 +18,71 @@ The Spec project extends Commander so that we use commands with specific aspects
 It uses the fact that Commander allows us to decorate commands with decoration that are polymorphic to commands as shown in Figure *@decorator*.
 
 
-The common abstract root class ==CmAbstractCommand== defines way to manage the context and execute a command.
-- 
++Commands and command decorators.>figures/FirstDecorator.pdf|width=60|label=decorator+
 
-The class ==CmUICommand== is a decorator of command dedicated for UI related state and actions. 
-As we saw in previous chapters
-- State: icon, shortcutKey
-- Behavior: defining icon, and shorcutKey
+Let us describe Figure *@decorator*:
+- The common abstract root class ==CmAbstractCommand== defines way to manage the context and execute a command.
+- The class ==CmBlokcCommand== is a generic command whose behavior is specified using a block. 
+- The class ==CmCommand== is the main root class of commands. Users will usually subclass it. For example, ==EgAddContactCommand== subclasses it as shown in Figure *@specdecorator*. 
+Without Spec integration, the class ==CmCommand== does not have any behavior related to Spec. 
+The only interesting extension point is the ==decorateWith:== method that is an extension hook as we show later. 
 
+- The class ==CmCommandDecorator== is the root of command decorators. It merely delegates to a decorated command. It supports dynamic name and descriptions (to be able to get more specialized and dynamically updated commands). At runtime, decorators will be created to wrap a command and as such provide more information.
+- The class ==CmUICommand== is a decorator of command dedicated for UI related state and actions. Note that it is not linked per se to Spec. It offers some general functionalities related to UI, as we saw in previous chapters:
+-- State: icon, shortcutKey
+-- Behavior: defining icon, and shorcutKey
 
-Figure *@specdecorator*
+Now we are ready to study the Spec integration.
 
-==asSpecCommand==
+!!! Modular Spec command decoration
 
+Figure *@specdecorator* shows how Commander is extended to support Spec specific behavior and this in a modular way.
+First the class ==SpCommand== is a Spec specific decorator. For example, it contains logic how to turn a command into a button presenter.
+Second, the package containing the Spec related code extends the class ==CmCommand== with the ==asSpecCommand== method.  
 The method ==asSpecCommand== decorates a command to define extra behavior responsible for the addition 
 of ui related functionality and state. 
 
++Spec decorations and use.>figures/DecoratorWithSpec.pdf|width=60|label=specdecorator+
+
 The implementation is the following one
-(check new implementation)
 [[[
-CmUICommand >> asSpecCommand
+CmCommand >> asSpecCommand
 	"Subclasses might override this method to define default icon and shortcut."
-	^ self decorateWith: SpUICommand
+	^ self decorateWith: SpCommand
 ]]]
 
+It means that the base command will be decorated by an instance of the class ==SpCommand==.
 
-+Spec decorations and use.>figures/DecoratorWithSpec.pdf|width=90|label=specdecorator+
+Remember that the method ==asSpecCommand== is directly or indirectly used by the developer to build commands that he will register to the command root of its presenter. 
+The following method show 
+[[[
+EgContactBookPresenter >> buildAddingGroupWith: presenter
+	^ (CmCommandGroup named: 'Adding') asSpecGroup
+		description: 'Commands related to contact addition.';
+		register: (EgAddContactCommand forSpec context: presenter);
+		beDisplayedAsGroup;
+		yourself
 
+]]]
 
+The method ==forSpec== is a handy creation class method.
+
+[[[
+CmCommand class >> forSpec
+	^ self new
+		asSpecCommand
+]]]
+
+What is interesting to note is that as an end-user the developer defining the command just as to define the method ==asSpecCommand== without having to worry about the details
+of the implementation. Here is the command definition for the command of adding a contact in our contact book application.
+
+[[[
+EgAddContactCommand >> asSpecCommand
+	^ super asSpecCommand
+		shortcutKey: $n meta;
+		iconName: #changeAdd;
+		yourself
+]]]
 
 !!! Decorating group of commands
 
