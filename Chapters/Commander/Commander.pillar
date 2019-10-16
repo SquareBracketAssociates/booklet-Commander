@@ -19,7 +19,7 @@ Every action is implemented as a separate command class (subclass of ==CmCommand
 The superclass defines the context in which the command should be executed. 
 Then the class ==CmCommand== introduces name and description.
 
-+A simple command and its hierarchy.>figures/BasicCommand.pdf|width=50|label=first+
++A simple command and its hierarchy.>figures/BasicCommand.pdf|width=35|label=first+
 
 We will show later that for UI framework, we need more information such as an icon and shortcut description.
 In addition we will present how commands can be decorated with extra functionality in an extensible way.
@@ -475,7 +475,7 @@ EgContactBookPresenter class >>
 				yourself)
 ]]]
 
-+With menu extension.>figures/inPlaceCustomisation.png|width=90|label=inPlaceCustomisation+
++With menu extension.>figures/inPlaceCustomisation.png|width=95|label=inPlaceCustomisation+
 
 !!! Managing a menu bar
 
@@ -554,7 +554,7 @@ EgContactBookPresenter class >> defaultSpec
 			yourself
 ]]]
 
-+With menubar.>figures/withmenubar.png|width=90|label=inPlaceCustomisation+
++With menubar.>figures/withmenubar.png|width=60|label=inPlaceCustomisation+
 
 
 !!! Conclusion

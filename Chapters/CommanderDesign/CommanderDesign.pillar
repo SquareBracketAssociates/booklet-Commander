@@ -18,7 +18,7 @@ The Spec project extends Commander so that we use commands with specific aspects
 It uses the fact that Commander allows us to decorate commands with decoration that are polymorphic to commands as shown in Figure *@decorator*.
 
 
-+Commands and command decorators.>figures/FirstDecorator.pdf|width=60|label=decorator+
++Commands and command decorators.>figures/FirstDecorator.pdf|width=75|label=decorator+
 
 Let us describe Figure *@decorator*:
 - The common abstract root class ==CmAbstractCommand== defines way to manage the context and execute a command.
@@ -42,7 +42,7 @@ Second, the package containing the Spec related code extends the class ==CmComma
 The method ==asSpecCommand== decorates a command to define extra behavior responsible for the addition 
 of ui related functionality and state. 
 
-+Spec decorations and use.>figures/DecoratorWithSpec.pdf|width=45|label=specdecorator+
++Spec decorations and use.>figures/DecoratorWithSpec.pdf|width=75|label=specdecorator+
 
 The implementation is the following one
 [[[
@@ -114,7 +114,7 @@ SpCommandGroup >> asMenuPresenter
 		menuPresenter
 ]]]
 
-+Spec group and group decorators.>figures/DecoratorGroupSpec.pdf|width=55|label=groupspec+
++Spec's group and group decorators.>figures/DecoratorGroupSpec.pdf|width=50|label=groupspec+
 
 
 !!! Example of Visitor: toolbarBuilder
@@ -145,7 +145,7 @@ SpvisitCommand: aCmCommandEntry
 
 
 
-+Full design: Core, UI support and Spec integration.>figures/DesignAdvanced.pdf|width=90|label=advanced+
++Full design: Core, UI support and Spec integration.>figures/DesignAdvanced.pdf|width=100|label=advanced+
 
 !!! Conclusion 
 

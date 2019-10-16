@@ -294,7 +294,7 @@ To test it, we can get access to the presenter as follows
 
 and you can send the ==newContact== message as shown in Figure *@inspector*.
 
-+Playing inside the inspector.>figures/inspector.png|width=60|label=inspector+
++Playing inside the inspector.>figures/inspector.png|width=80|label=inspector+
 
 
 
