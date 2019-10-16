@@ -5,10 +5,16 @@ Then we define a user interface.
 This example will be used in other certain places in the book to show extra concepts such as commands, applications, windows.
 
 Now it is more a replay of the concept previously mentioned.
-Let's start with a domain and then we will add some basic interface.
+Let's start with a domain and then we will add some basic interface to obtain a little application as shown in Figure *@overview*.
+
+
++A rudimentary contact book application.>figures/withmenuExtension.png|width=60|label=overview+
 
 !!! Contact domain model
-We start defining a little domain model for our example: we define a contact and a contact book. 
+We start defining a little domain model for our example: we define a contact and a contact book as shown in Figure *@contactmodel*. 
+
++A simple model.>figures/contactBook.pdf|width=60|label=contactmodel+
+
 We start by defining a simple contact class.
 
 [[[
