@@ -26,6 +26,9 @@ As we saw in previous chapters
 - State: icon, shortcutKey
 - Behavior: defining icon, and shorcutKey
 
+
+Figure *@specdecorator*
+
 ==asSpecCommand==
 
 The method ==asSpecCommand== decorates a command to define extra behavior responsible for the addition 
@@ -38,6 +41,10 @@ CmUICommand >> asSpecCommand
 	"Subclasses might override this method to define default icon and shortcut."
 	^ self decorateWith: SpUICommand
 ]]]
+
+
++Spec decorations and use.>figures/DecoratorWithSpec.pdf|width=90|label=specdecorator+
+
 
 
 !!! Decorating group of commands
