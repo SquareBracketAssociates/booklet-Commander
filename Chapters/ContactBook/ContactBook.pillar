@@ -1,21 +1,22 @@
-!! A Simple Contact Book 
+!! A Simple Contact Book
 
-In this chapter we develop a simple model for a contact book. 
+In this chapter we develop a simple model for a contact book.
 Then we define a user interface.
-This example will be used in other certain places in the book to show extra concepts such as commands, applications, windows.
+This example will be used later in the book as an example to explain concepts such as commands, applications, windows.
 
 Now it is more a replay of the concept previously mentioned.
-Let's start with a domain and then we will add some basic interface to obtain a little application as shown in Figure *@overview*.
+We start by implementing classes modeling the domain and then we will add a basic graphical user interface to obtain a little application as shown in Figure *@overview*.
 
 
 +A rudimentary contact book application.>figures/withmenuExtension.png|width=60|label=overview+
 
-!!! Contact domain model
-We start defining a little domain model for our example: we define a contact and a contact book as shown in Figure *@contactmodel*. 
+!!! Contact book model
+The model for the domain of our example is composed of two classes: Contact and ContactBook as shown in Figure *@contactmodel*.
 
-+A simple model.>figures/contactBook.pdf|width=60|label=contactmodel+
++A simple model for the contact book.>figures/contactBook.pdf|width=60|label=contactmodel+
 
-We start by defining a simple contact class.
+!!!! Contact
+The class modeling a contact is defined as follow.
 
 [[[
 Object subclass: #EgContact
@@ -24,7 +25,7 @@ Object subclass: #EgContact
 	package: 'EgContactBook'
 ]]]
 
-We just define a ==printOn:== method and a couple of accessors.
+It just defines a ==printOn:== method and a couple of accessors.
 
 [[[
 EgContact >> printOn: aStream
@@ -57,7 +58,7 @@ EgContact >> phone: anObject
 ]]]
 
 [[[
-EgContact >> hasMatchingText: aString 
+EgContact >> hasMatchingText: aString
 	^ name includesSubstring: aString caseSensitive: false
 ]]]
 
@@ -70,9 +71,9 @@ EgContact class >> name: aNameString phone: aPhoneString
 		yourself
 ]]]
 
-!!! ContactBook
-Now we define the contact book class.
-It is also straighforward.
+!!!! ContactBook
+Now we define the class modeling the contact book.
+As for the contact class, it is simple and quite straighforward.
 
 [[[
 Object subclass: #EgContactBook
@@ -99,8 +100,6 @@ EgContactBook >> contacts: aColl
 	contacts := aColl
 ]]]
 
-
-
 We add the possibility to add and remove a contact
 
 [[[
@@ -108,18 +107,17 @@ EgContactBook >> addContact: aContact
 	contacts add: aContact
 ]]]
 
-
 [[[
 EgContactBook >> removeContact: aContact
 	contacts remove: aContact
 ]]]
 
 [[[
-EgContactBook >> addContact: newContact after: contactAfter 
+EgContactBook >> addContact: newContact after: contactAfter
 	contacts add: newContact after: contactAfter
 ]]]
 
-We add a simple testing method in case you want to write some tests (which we urge you to do).
+We add a simple testing method in case one want to write some tests (which we urge you to do).
 
 [[[
 EgContactBook >> includesContact: aContact
@@ -136,30 +134,30 @@ EgContactBook >> add: contactName phone: phone
 	^ contact
 ]]]
 
-Finally a little query facility:
+Finally some facilities to query the contact book.
 
 [[[
-EgContactBook >> findContactsWithText: aText 
+EgContactBook >> findContactsWithText: aText
 	^ contacts select: [ :e | e hasMatchingText: aText ]
 ]]]
 
 [[[
-EgContactBook >> size 
+EgContactBook >> size
 	^ contacts size
 ]]]
 
-!!! Prefilling up the contact book
+!!!! Pre-filling up the contact book
 
-Since we want to have some contacts and we way to keep them without resorting 
-to a database or file we set some class instance variables. 
+Since we want to have some contacts and we way to keep them without resorting
+to a database or file we set some class instance variables.
 
 We defined two class instance variables: ==family== and ==coworkers== and define
-some class method accessors as follows: 
+some class method accessors as follows:
 
 [[[
 EgContactBook class >> family
-	^family ifNil: [ 
-		family := self new 
+	^family ifNil: [
+		family := self new
 			add: 'John' phone: '342 345';
 			add: 'Bill' phone: '123 678';
 			add: 'Marry' phone: '789 567';
@@ -168,8 +166,8 @@ EgContactBook class >> family
 
 [[[
 EgContactBook class >> coworkers
-	^coworkers ifNil: [ 
-		coworkers := self new 
+	^coworkers ifNil: [
+		coworkers := self new
 			add: 'Stef' phone: '112 378';
 			add: 'Pavel' phone: '898 678';
 			add: 'Marcus' phone: '444 888';
@@ -177,6 +175,7 @@ EgContactBook class >> coworkers
 ]]]
 
 We add one method to be able to reset them if necessary.
+The ==<script>== pragma tells the system browser to add a small button to execute ==reset== method easily.
 
 [[[
 EgContactBook class >> reset
@@ -186,15 +185,15 @@ EgContactBook class >> reset
 ]]]
 
 
-!!! A simple UI
+!!! A simple graphical user interface
 
-Now we define the application we want to get. 
-The application UI is shown in Figure *@firstFullUI*.
+Now we define the graphical user interface (GUI) to expose the model to the user.
+The targeted GUI is shown in Figure *@firstFullUI*.
 
 +A rudimentary contact book application.>figures/firstFullUI.png|width=60|label=firstFullUI+
 
-We define the class ==EgContactBookPresenter==. 
-It holds a reference to a contact book and it is structured around a table. 
+We define the class ==EgContactBookPresenter==.
+It holds a reference to a contact book and it is structured around a table.
 
 [[[
 SpPresenter subclass: #EgContactBookPresenter
@@ -220,17 +219,15 @@ EgContactBookPresenter >> table
 	^ table
 ]]]
 
-!!! Initializing the model
+!!!! Initializing the model
 
-We specialize the method ==setModelBeforeInitialization:== that is invoked by the framework to assign the contactBook instance variable to the object passed during the execution of the expression ==(EgContactBookPresenter on: EgContactBook coworkers) openWithSpec==.
+We specialize the method ==setModelBeforeInitialization:== that is invoked by the framework to assign the ==contactBook== instance variable to the object passed during the execution of the expression ==(EgContactBookPresenter on: EgContactBook coworkers) openWithSpec==.
 
 [[[
 EgContactBookPresenter >> setModelBeforeInitialization: aContactBook
 	super setModelBeforeInitialization: aContactBook.
 	contactBook := aContactBook
 ]]]
-
-
 
 !!!! Layout
 
@@ -242,13 +239,14 @@ EgContactBookPresenter class >> defaultSpec
 
 !!!! Widget initialization
 
-We initialize the table to display two columns for the name and the phone. 
-The respective accessors willbe sent to the elements to fill up the columns.
+We initialize the table to display two columns for the name and the phone.
+The respective accessor messages will be sent to the elements to fill up the columns.
 Finally the table contents is set using the contact book contents.
+
 [[[
 EgContactBookPresenter >> initializePresenters
 	table := self newTable.
-	table 
+	table
 		addColumn: (StringTableColumn title: 'Name' evaluated: #name);
 		addColumn: (StringTableColumn title: 'Phone' evaluated: #phone).
 	table items: contactBook contents.
@@ -257,24 +255,28 @@ EgContactBookPresenter >> initializePresenters
 Now we can start opening the UI by executing the following snippet
 ==(EgContactBookPresenter on: EgContactBook coworkers) openWithSpec==
 
-We define a class method to be able to easily reexecute the set up. 
+We define a class method to be able to easily re-execute the set up.
 [[[
 EgContactBookPresenter class >> coworkersExample
 	<example>
-	^ (self on: EgContactBook coworkers) openWithSpec 
+	^ (self on: EgContactBook coworkers) openWithSpec
 ]]]
 
-You should obtain the following UI as shown in Figure *@first*.
+You should obtain the following GUI as shown in Figure *@first*.
 
-+First version without menus and toolbar.>figures/firstVersion.png|width=60|label=first+
++First version of the GUI without menus and toolbar.>figures/firstVersion.png|width=60|label=first+
 
+!!!! Interacting with user
+
+We now implement the method that will open a window to ask the user to create
+a new contact for the contact book.
 
 [[[
 EgContactBookPresenter >> newContact
 	| rawData splitted |
-	rawData := self 
-		request: 'Enter new contact name and phone (split by comma)' 
-		initialAnswer: '' 
+	rawData := self
+		request: 'Enter new contact name and phone (split by comma)'
+		initialAnswer: ''
 		title: 'Create new contact'.
 	splitted := rawData splitOn: $,.
 	(splitted size = 2 and: [ splitted allSatisfy: #isNotEmpty ])
@@ -286,9 +288,9 @@ EgContactBookPresenter >> newContact
 		yourself
 ]]]
 
-To test it, we can get access to the presenter as follows 
+To test it, we can get access to the presenter as follows
 [[[
-(EgContactBookPresenter on: EgContactBook coworkers) 
+(EgContactBookPresenter on: EgContactBook coworkers)
 	openWithSpec presenter inspect
 ]]]
 
@@ -297,11 +299,10 @@ and you can send the ==newContact== message as shown in Figure *@inspector*.
 +Playing inside the inspector.>figures/inspector.png|width=80|label=inspector+
 
 
+!!!! Some extra methods
 
-
-!!! Some extra methods
-
-We will also defined the methods ==isContactSelected== and ==selectedContact== to know if a contact is currently selected and to return it. It will help us later to add contact just after the currently selected contact.
+We will also define the methods ==isContactSelected== and ==selectedContact== to know if a contact is currently selected and to return it.
+It will help us later to add contact just after the currently selected contact.
 
 [[[
 EgContactBookPresenter >> isContactSelected
@@ -313,6 +314,6 @@ EgContactBookPresenter >> selectedContact
 	^ table selection selectedItem
 ]]]
 
-!!! Conclusion 
+!!! Conclusion
 
 We have a little contact book manager now that we can use to explain other topics.
