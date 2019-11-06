@@ -1,20 +1,20 @@
 !! Introduction
 
-Commands are reification of actions and used in many places such as UI frameworks or applications such 
-as texteditors and tools such debuggers.
-Since recent Pharo versions, Pharo did not have a common way of expressing commands and this led to multiple ways of doing the same.
-Each project was reimplementing commands.
-To solve this problem we started to analysis the space and existing solutions. We designed 
-the Commander20 framework that Pharo will use and that all the clients will be migrated too with time.
-While the command design pattern is simple, designing a simple yet versatile framework is worth a documentation.
-This booklet describes how commands are expressed in Pharo.
+Commands are reification of actions.
+They can be used to implement actions in many contexts such as text-editors, debuggers, web-browsers, etc.
+Since recent versions, Pharo had no unified way to express commands and this led to multiple implementation of the command design pattern spreading across projects.
+Each project was re-implementing the design-pattern leading to slightly different version preventing the re-usability of common parts.
+To solve this problem we started to analyze existing solutions.
+We designed Commander20 framework that Pharo will use as canonical implementation of the command design pattern.
+With time, all custom-implementations of the command design pattern will be migrated to use Commander20.
+This booklet describes how commands are expressed in Pharo using Commander20.
 
-To set some stage we start by defining a simple domain and applications in Spec20. 
-Then we show how commands can be defined. 
+To set some stage we start by defining a simple domain and applications in Spec20.
+Then we show how commands can be defined.
 In the final chapter we discuss the design of the framework with more details.
 
-The code used of the contactBook is available at *https://github.com/Ducasse/EgContactBook*.
-The code contains tests that are not listing in this booklet but we encourage you to read them.
+The code used of the contact book is available at *https://github.com/Ducasse/EgContactBook*.
+The code contains tests that are not listed in this booklet but we encourage you to read them.
 
 
 ${inputFile:path=Chapters/ContactBook/ContactBook.pillar}$
