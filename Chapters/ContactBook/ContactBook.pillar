@@ -64,7 +64,6 @@ EgContact >> hasMatchingText: aString
 
 [[[
 EgContact class >> name: aNameString phone: aPhoneString
-
 	^ self new
 		name: aNameString;
 		phone: aPhoneString;
@@ -85,7 +84,6 @@ Object subclass: #EgContactBook
 
 [[[
 EgContactBook >> initialize
-
 		super initialize.
 		contacts := OrderedCollection new
 ]]]
@@ -232,9 +230,8 @@ EgContactBookPresenter >> setModelBeforeInitialization: aContactBook
 !!!! Layout
 
 [[[
-EgContactBookPresenter class >> defaultSpec
-
-	^ SpBoxLayout newVertical add: #table; yourself
+EgContactBookPresenter class >> defaultLayout
+	^ SpBoxLayout newTopToBottom add: #table; yourself
 ]]]
 
 !!!! Widget initialization
