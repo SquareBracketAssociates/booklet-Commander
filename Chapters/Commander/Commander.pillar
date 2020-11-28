@@ -307,10 +307,7 @@ EgContactBookPresenter >> initializePresenters
 !!! Extending menus
 
 Building menu is nice, but sometimes we need to add a menu into an existing one. 
-Commander supports this via a dedicated pragma, called ==<extensionCommands>== that identifies extensions. 
-
-as we show it now. 
-
+Commander supports this via a dedicated pragma, called ==<extensionCommands>== that identifies extensions as we show it now.
 
 Imagine that we have a new functionality that we want to add to the contact book and that this behavior is packaged in another package, here, ==EgContactBook-Extensions==.
 First we will define a new command and second we will show how we can extend the existing menu to add a new menu item. 
