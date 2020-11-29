@@ -12,17 +12,17 @@ We show the integration of Commander and Spec as a concrete use case.
 
 By default a command does not know about Spec specific behavior. 
 It can be used in other contexts such as scripting libraries as this was the case with Gofer (Gofer was a scripting API to script monticello).
-Another example is that the core behavior of PharoLauncher will be exposed as Clap command-line using the fact that PharoLauncher propose commands.
+The design of Commander supports the following scenario: the idea is that the core behavior of PharoLauncher should be able to be exposed as Clap command-line using the fact that PharoLauncher define commands.
 
 The Spec project extends Commander so that we use commands with specific aspects related to Spec.
 It uses the fact that Commander allows us to decorate commands with decoration that are polymorphic to commands as shown in Figure *@decorator*.
 
 
-+Commands and command decorators.>figures/FirstDecorator.pdf|width=75|label=decorator+
++Commands and command decorators.>figures/FirstDecorator.pdf|width=85|label=decorator+
 
 Let us describe Figure *@decorator*:
 - The common abstract root class ==CmAbstractCommand== defines way to manage the context and execute a command.
-- The class ==CmBlokcCommand== is a generic command whose behavior is specified using a block. 
+- The class ==CmBlockCommand== is a generic command whose behavior is specified using a block. 
 - The class ==CmCommand== is the main root class of commands. Users will usually subclass it. For example, ==EgAddContactCommand== subclasses it as shown in Figure *@specdecorator*. 
 Without Spec integration, the class ==CmCommand== does not have any behavior related to Spec. 
 The only interesting extension point is the ==decorateWith:== method that is an extension hook as we show later. 
@@ -47,7 +47,6 @@ of ui related functionality and state.
 The implementation is the following one
 [[[
 CmCommand >> asSpecCommand
-	
 	^ self decorateWith: SpCommand
 ]]]
 
@@ -69,8 +68,7 @@ The method ==forSpec== is a handy creation class method.
 
 [[[
 CmCommand class >> forSpec
-	^ self new
-		asSpecCommand
+	^ self new asSpecCommand
 ]]]
 
 What is interesting to note is that as an end-user the developer defining the command just as to define the method ==asSpecCommand== without having to worry about the details
