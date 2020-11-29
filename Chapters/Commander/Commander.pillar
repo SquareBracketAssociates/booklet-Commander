@@ -31,8 +31,11 @@ Here is a sketch of the logic of instantiating and executing a command.
 (EgAddContactCommand new context: aPresenter) execute
 ]]]
 
-We instantiate the command class and pass the presenter (in the case of a UI command) to which the command applies using the message ==context:==.
-And we send to the command the message ==execute== to trigger its execution. This last point will often be done by the user interaction via toolbar or menuitems. 
+We instantiate the command class and pass the presenter (in the case of a UI command) to which the command applies using the message ==context:==. 
+Note that a context can be an object, such as a presenter in the case of Spec but also be a block. 
+Passing a block is interesting to give the command access to objects that depend on an execution that did not happen yet.
+And we send to the command the message ==execute== to trigger its execution. 
+This last point will often be done by the user interaction via toolbar or menuitems. 
 
 !!! Defining commands
 A command is a simple object instance of a subclass of the class ==CmCommand==.
@@ -237,15 +240,14 @@ As we will show later we could even replace a menu item by another one, changing
 +With two menu items with groups.>figures/withMenus.png|width=60|label=withmenu+
 
 !!! Introducing groups
+Commands can be managed in groups and such groups can be turned into corresponding menu item sections or submenus.
+The key hook method is the class method named ==buildCommandsGroupWith: aPresenterInstance forRoot:==.
 
-Commands can be managed in groups and such groups can be turned into corresponding menu item sections.
-The key hook method is the class method named ==buildCommandsGroupWith: presenterInstance forRoot:==.
+Here we give an example of such a grouping as menu section (==beDisplayedAsGroup==). 
 
 
-Here we give an example of such grouping. 
-Note that the message ==asSpecGroup== sent to a group.
-We create two method creating each a simple group one for adding and one for removing contracts.
-
+We create two methods creating each a simple group: one for adding and one for removing contracts.
+Each of the method could contain multiple commands. Here we just add one using the message ==register:==.
 [[[
 EgContactBookPresenter class >> buildAddingGroupWith: presenter
 	^ (CmCommandGroup named: 'Adding') asSpecGroup
@@ -254,6 +256,8 @@ EgContactBookPresenter class >> buildAddingGroupWith: presenter
 			beDisplayedAsGroup;
 			yourself
 ]]]
+
+Note that the message ==asSpecGroup== sent to a group.
 
 [[[
 EgContactBookPresenter class >> buildRemovingGroupWith: presenter
@@ -306,7 +310,7 @@ EgContactBookPresenter >> initializePresenters
 
 !!! Extending menus
 
-Building menu is nice, but sometimes we need to add a menu into an existing one. 
+Building menu is nice, but sometimes we need to place an extra menu into an existing one, when we load a separate package.
 Commander supports this via a dedicated pragma, called ==<extensionCommands>== that identifies extensions as we show it now.
 
 Imagine that we have a new functionality that we want to add to the contact book and that this behavior is packaged in another package, here, ==EgContactBook-Extensions==.
@@ -424,9 +428,14 @@ EgContactBookPresenter >> initializeWindow: aWindowPresenter
 !!! In place customisation
 
 Commander supports also the reuse and in place customisation of commands.
-It means that the instance representing a command can be modified on the spot: for example its name or description can be adapted to the exact 
-use context.
+It means that the instance representing a command can be reused and modified on the spot: for example its name or description can be adapted to the exact use context.
+
+
 Here is an example that shows that we adapt twice the same command.
+We will
+- define a basic command (inspect)
+- instantiated it with two different contexts, contexts that are dynamic -- we will pass blocks as contexts.
+- change the description of the two commands. 
 
 Let us define a really simple and generic command which will simply inspect the object. 
 
@@ -480,11 +489,11 @@ EgContactBookPresenter class >>
 +With menu extension.>figures/inPlaceCustomisation.png|width=95|label=inPlaceCustomisation+
 
 !!! Managing a menu bar
+In addition to contextual menu creation sending the message ==asMenuPresenter== to a group), commander supports menu bar and toolbar creation sending the message ==asMenuBarPresenter== or ==asToolbarPresenter== to a group.
+The logic is the same than for contextual menus : we define a group and register it under a given root and we specify to the presenter to use this group as a menubar.
 
-Commander supports also menu bar creation.
-The logic is the same than for contextual menus: we define a group and register it under a given and we specify to the presenter to use this group 
-as a menubar.
 
+!!!!! Defining a print command.
 Imagine that we have a new command to print the contact.
 
 [[[
@@ -499,7 +508,7 @@ EgPrintContactCommand >> initialize
 	super initialize.
 	self
 		name: 'Print';
-		description: 'Print the contact book in Transcript.'	
+		description: 'Print the contact book in Transcript.'
 ]]]
 
 [[[
@@ -510,6 +519,8 @@ EgPrintContactCommand >> execute
 ]]]
 
 
+
+!!!!! Menu bar group.
 We create a simple group that we call 'MenuBar' (but it could be called anything).
 
 [[[
@@ -532,6 +543,7 @@ EgContactBookPresenter class >>
 
 And we hook it into the widget as the last line of the ==initializePresenters== method. 
 Notice the use of the message ==asMenuBarPresenter== and the addition of a new instance variable called ==menuBar==.
+We have to do it to give the possibility to manage the menubar presenter as any other presenters.
 
 [[[
 EgContactBookPresenter >> initializePresenters
@@ -547,9 +559,9 @@ EgContactBookPresenter >> initializePresenters
 Finally to get the menu bar you should declare it in the layout.
 
 [[[
-EgContactBookPresenter class >> defaultSpec
+EgContactBookPresenter class >> defaultLayout
 
-	^ SpBoxLayout newVertical
+	^ SpBoxLayout newTopToBottom
 			add: #menuBar
 			withConstraints: [ :constraints | constraints height: self toolbarHeight ];
 			add: #table; 
@@ -566,7 +578,18 @@ We show how you can turn command into menu item in Spec20 by sending the message
 You learned how we can reuse and customize commands. 
 We presented groups of commands as a way to structure menus and menubars. 
 
-In the next chapter we will provide more details about certains UI aspects. 
+In the next chapter we will provide more details about certain UI aspects. 
+
+
+
+
+
+
+
+
+
+
+
 
 
 !! Tips and Tricks
