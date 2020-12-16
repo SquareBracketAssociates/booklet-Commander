@@ -153,7 +153,7 @@ cmd execute
 
 !!! Adding the remove contact command
 
-We define now another command to remove a command. 
+We define now another command to remove a contact.
 This example is interesting because it does not involve any UI interaction.
 It shows that a command is not necessarily linked to UI interaction.
 
@@ -692,7 +692,7 @@ EgContactBookPresenter class >> defaultLayout
 			yourself
 ]]]
 
-An example taken from the Pharo tools, illustrates the use withi the method ==asToolbarPresenterWith:==.
+An example taken from the Pharo tools, illustrates the use with the method ==asToolbarPresenterWith:==.
 
 [[[
 StPlayground >> buildToolbar
