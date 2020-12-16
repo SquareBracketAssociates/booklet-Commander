@@ -130,7 +130,7 @@ SpCommandGroup >> asToolbarPresenter
 ]]]
 
 [[[
-SpvisitCommand: aCmCommandEntry
+SpToolBarPresenterBuilder >> visitCommand: aCmCommandEntry
 	aCmCommandEntry positionStrategy
 		addButton: (SpToolBarButton new
 						label: aCmCommandEntry name;
