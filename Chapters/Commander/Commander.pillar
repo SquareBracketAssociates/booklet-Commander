@@ -403,7 +403,7 @@ EgRemoveContactCommand >> asSpecCommand
 
 
 [[[
-EgRemoveContactCommand >> asSpecCommand
+EgAddContactCommand >> asSpecCommand
 	^ super asSpecCommand
 			shortcutKey: $n meta;
 			iconName: #changeAdd;
@@ -552,7 +552,7 @@ EgContactBookPresenter >> initializePresenters
 		addColumn: (SpStringTableColumn title: 'Name' evaluated: #name);
 		addColumn: (SpStringTableColumn title: 'Phone' evaluated: #phone).
 	table contextMenu: [ (self rootCommandsGroup / 'Context Menu') beRoot asMenuPresenter ].
-	table items: contactBook contents.
+	table items: contactBook contacts.
 	menuBar := (self rootCommandsGroup / 'MenuBar') asMenuBarPresenter.
 ]]]	
 
